@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+
+<h4>Task Summary:</h4>
+<ul>
+    <li>🟡 Pending: {{ status_summary.pending|default:0 }}</li>
+    <li>🟠 In Progress: {{ status_summary.in_progress|default:0 }}</li>
+    <li>✅ Done: {{ status_summary.done|default:0 }}</li>
+</ul>
+
+<h4>My Tasks:</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.title }}</td>
+            <td>{{ task.status }}</td>
+            <td>{{ task.due_date }}</td>
+            <td>
+                {% if user.id == task.assigned_to.id %}
+                    <a href="{% url 'task-update' task.pk %}" class="btn btn-sm btn-warning">Update</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No tasks assigned.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

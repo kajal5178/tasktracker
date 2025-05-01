@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>My Tasks</h2>
+
+<!-- 🔍 Filter Form -->
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="status" class="form-select">
+            <option value="">All Status</option>
+            <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>Pending</option>
+            <option value="in_progress" {% if request.GET.status == "in_progress" %}selected{% endif %}>In Progress</option>
+            <option value="done" {% if request.GET.status == "done" %}selected{% endif %}>Done</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <input type="date" name="due" value="{{ request.GET.due }}" class="form-control">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+</form>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.title }}</td>
+            <td>{{ task.due_date }}</td>
+            <td>{{ task.status }}</td>
+            <td>
+                {% if user.id == task.assigned_to.id %}
+                <a href="{% url 'task-update' task.pk %}" class="btn btn-sm btn-warning">Update</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if user.groups.all.0.name == 'Manager' %}
+<a href="{% url 'task-create' %}" class="btn btn-primary">Create Task</a>
+{% endif %}
+{% endblock %}
